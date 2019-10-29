@@ -1,7 +1,7 @@
 # lailib
 
 ## installation
-###Pipy
+### Pipy
 pip install lailib
 ### Anaconda
 conda install -c learnable lailib
