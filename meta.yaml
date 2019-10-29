@@ -1,0 +1,12 @@
+package:
+  name: lailib
+  version: 0.0.1
+
+build:
+  number: 1
+
+requirements:
+  run:
+    - python >=3.6
+about:
+  summary: lai's first collabration library
