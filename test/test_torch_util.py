@@ -141,4 +141,3 @@ class TestSaveLoad():
         assert (global_step == 1)
         assert (not self.compare_models(saved_model_0, reload_model))
         assert (self.compare_models(saved_model_1, reload_model))
-

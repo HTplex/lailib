@@ -59,7 +59,7 @@ def load_last_checkpoint(network,
     :return: network with loaded parameters, optimizer with loaded parameter, iternumber of last checkpoint
     '''
     checkpoint_paths = [f for f in listdir(save_dir) if f.endswith('pth')]
-    if not len(checkpoint_paths):
+    if not checkpoint_paths:
         print('first iteration, initialize model')
         return network, 0
     iter_numbers = [int(f.split('_')[0]) for f in checkpoint_paths]
