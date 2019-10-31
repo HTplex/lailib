@@ -3,8 +3,7 @@ from lailib.image.binarize import otsu_thresh
 
 def crop_boundary_and_padding(im, padding=0, binarized=None):
     '''
-    crop and padding an image, with out padding the cropped image should not have any empty columns
-    or rows on each end of both axises
+    crop and padding objects and text imgs with pure black border, then padding.
     ex:
     for input
         0   255 0   0
