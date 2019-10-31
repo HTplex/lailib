@@ -1,6 +1,6 @@
 import cv2
 
-def resize_height_keep_ratio(image_cv, new_height, **kwargs):
+def resize_height_keep_ratio(im, new_height, **kwargs):
     '''
     resize image with given height, keep ratio, kwargs are passed to
     cv2.resize function.
@@ -9,7 +9,7 @@ def resize_height_keep_ratio(image_cv, new_height, **kwargs):
     :return: resized image
     '''
 
-    (height, width) = image_cv.shape
+    (height, width) = im.shape
     new_width = int(float(width) * new_height / float(height))
-    image_cv = cv2.resize(image_cv, (new_width, new_height), **kwargs)
-    return image_cv
+    im = cv2.resize(im, (new_width, new_height), **kwargs)
+    return im
