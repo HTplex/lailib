@@ -28,8 +28,9 @@ def save_network(network,
     :param use_gpu: a parameter indicates if the input neural network is on gpu
     :return: None
     '''
-
-    save_filename = '%s_net_%s.pth' % (global_step, model_name)
+    if  '_' in model_name or '.' in model_name:
+        raise ValueError('model name can not contain "." or "_"')
+    save_filename = '%s_%s.pth' % (model_name, global_step)
     save_path = os.path.join(save_dir, save_filename)
     state = {'state_dict': network.cpu().state_dict(),
              'optimizer': optimizer.state_dict()}
@@ -58,11 +59,14 @@ def load_last_checkpoint(network,
     :reset_optimizer: if set to true, optimizer will not load parameters in checkpoint dict
     :return: network with loaded parameters, optimizer with loaded parameter, iternumber of last checkpoint
     '''
+    if  '_' in model_name or '.' in model_name:
+        raise ValueError('model name can not contain "." or "_"')
     checkpoint_paths = [f for f in listdir(save_dir) if f.endswith('pth')]
     if not checkpoint_paths:
         print('first iteration, initialize model')
         return network, 0
-    iter_numbers = [int(f.split('_')[0]) for f in checkpoint_paths]
+    raw_names = [f.split('.')[0] for f in checkpoint_paths]
+    iter_numbers = [int(f.split('_')[1]) for f in raw_names]
     max_global_step = np.max(np.asarray(iter_numbers))
     network, optimizer = load_network(network,
                            optimizer,
@@ -97,8 +101,10 @@ def load_network(network,
 
     :return: network with loaded parameters, optimizer with loaded parameter,
     '''
+    if  '_' in model_name or '.' in model_name:
+        raise ValueError('model name can not contain "." or "_"')
     network.cpu()
-    save_filename = '%s_net_%s.pth' % (global_step, model_name)
+    save_filename = '%s_%s.pth' % (model_name, global_step)
     save_path = os.path.join(save_dir, save_filename)
     state_dicts = torch.load(save_path)
     network.load_state_dict(state_dicts['state_dict'])

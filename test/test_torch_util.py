@@ -11,7 +11,7 @@ import pytest
 
 @pytest.fixture(scope='function')
 def model_and_meta():
-    model_name = 'dummy'
+    model_name = 'Dummy'
     global_step = 0
     saved_model = DummyTorchModule()
     return [model_name, global_step, saved_model]
@@ -42,7 +42,7 @@ class TestSaveLoad():
                      tmpdir,
                      model_name,
                      global_step)
-        assert ('%s_net_%s.pth' % (global_step, model_name) in listdir(tmpdir))
+        assert ('%s_%s.pth' % (model_name, global_step) in listdir(tmpdir))
 
     def test_save_model_gpu(self, tmpdir, model_and_meta):
         model_name, global_step, saved_model = model_and_meta
@@ -54,7 +54,7 @@ class TestSaveLoad():
                      model_name,
                      global_step)
 
-        assert ('%s_net_%s.pth' % (global_step, model_name) in listdir(tmpdir))
+        assert ('%s_%s.pth' % (model_name, global_step) in listdir(tmpdir))
 
     def test_save_load(self, tmpdir, model_and_meta):
         # test if load saved model we get same result
@@ -108,7 +108,7 @@ class TestSaveLoad():
         assert (self.compare_models(saved_model, reload_model))
 
     def test_save_load_last_checkpoint(self, tmpdir):
-        model_name = 'dummy'
+        model_name = 'Dummy'
         global_step_0 = 0
         saved_model_0 = DummyTorchModule()
         saved_optimizer_0 = torch.optim.Adagrad(saved_model_0.parameters(), lr=5e-4)
@@ -141,3 +141,34 @@ class TestSaveLoad():
         assert (global_step == 1)
         assert (not self.compare_models(saved_model_0, reload_model))
         assert (self.compare_models(saved_model_1, reload_model))
+
+    def test_invalid_model_name(self, model_and_meta, tmpdir):
+        model_name, global_step, saved_model = model_and_meta
+        model_name = 'dummy_model'
+        saved_optimizer = torch.optim.Adagrad(saved_model.parameters(), lr=5e-4)
+
+        with pytest.raises(ValueError, match='model name can not contain "." or "_"'):
+            save_network(saved_model,
+                         saved_optimizer,
+                         tmpdir,
+                         model_name,
+                         global_step=False,
+                         use_gpu=True)
+
+        with pytest.raises(ValueError, match='model name can not contain "." or "_"'):
+            load_last_checkpoint(saved_model,
+                                 saved_optimizer,
+                                 tmpdir,
+                                 model_name,
+                                 use_gpu = False,
+                                 reset_optimizer=False)
+
+        with pytest.raises(ValueError, match='model name can not contain "." or "_"'):
+            load_network(saved_model,
+                         saved_optimizer,
+                         tmpdir,
+                         model_name,
+                         global_step,
+                         use_gpu = False,
+                         reset_optimizer=False)
+
